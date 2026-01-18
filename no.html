@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>Ranakawat Kirana Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#f2f2f2}
+header{background:#e67e22;color:#fff;text-align:center;padding:15px}
+.section{margin:10px}
+.product{
+background:#fff;display:flex;align-items:center;
+padding:10px;border-radius:10px;margin-bottom:10px
+}
+.product img{width:70px;height:70px;border-radius:8px;margin-right:10px}
+.controls button{
+padding:5px 10px;border:none;border-radius:5px;margin:2px;color:white
+}
+.plus{background:#27ae60}
+.minus{background:#c0392b}
+#cart{background:#fff;margin:10px;padding:10px;border-radius:10px}
+.btn{width:100%;padding:10px;margin-top:6px;border:none;border-radius:6px;color:white}
+.whatsapp{background:#25d366}
+.upi{background:#2980b9}
+.pdf{background:#8e44ad}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>🛒 Ranakawat Kirana Store</h2>
+<p>📍 Main Market, Ward No.3</p>
+<p>📞 9XXXXXXXXX</p>
+</header>
+
+<!-- PRODUCTS -->
+<div class="section">
+
+<h3>🍚 Grocery</h3>
+
+<div class="product">
+<img src="https://i.imgur.com/0Z8FQZp.jpg">
+<div style="flex:1">चावल ₹50</div>
+<div class="controls">
+<button class="plus" onclick="add('Rice',50)">+</button>
+<button class="minus" onclick="remove('Rice')">−</button>
+</div>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/3KQZ5bF.jpg">
+<div style="flex:1">आटा ₹40</div>
+<div class="controls">
+<button class="plus" onclick="add('Atta',40)">+</button>
+<button class="minus" onclick="remove('Atta')">−</button>
+</div>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/qL2F8pJ.jpg">
+<div style="flex:1">चना दाल ₹90</div>
+<div class="controls">
+<button class="plus" onclick="add('Chana Dal',90)">+</button>
+<button class="minus" onclick="remove('Chana Dal')">−</button>
+</div>
+</div>
+
+<h3>🥛 Dairy</h3>
+
+<div class="product">
+<img src="https://i.imgur.com/TyCSG9A.jpg">
+<div style="flex:1">Milk ₹60</div>
+<div class="controls">
+<button class="plus" onclick="add('Milk',60)">+</button>
+<button class="minus" onclick="remove('Milk')">−</button>
+</div>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/WkH3NqM.jpg">
+<div style="flex:1">Paneer ₹90</div>
+<div class="controls">
+<button class="plus" onclick="add('Paneer',90)">+</button>
+<button class="minus" onclick="remove('Paneer')">−</button>
+</div>
+</div>
+
+<h3>🍫 Snacks</h3>
+
+<div class="product">
+<img src="https://i.imgur.com/lU1RZrF.jpg">
+<div style="flex:1">Chocolate ₹20</div>
+<div class="controls">
+<button class="plus" onclick="add('Chocolate',20)">+</button>
+<button class="minus" onclick="remove('Chocolate')">−</button>
+</div>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/8N9nqSx.jpg">
+<div style="flex:1">Biscuit ₹10</div>
+<div class="controls">
+<button class="plus" onclick="add('Biscuit',10)">+</button>
+<button class="minus" onclick="remove('Biscuit')">−</button>
+</div>
+</div>
+
+</div>
+
+<!-- CART -->
+<div id="cart">
+<h3>🧾 Cart</h3>
+<div id="items"></div>
+
+<p>Subtotal ₹<span id="sub">0</span></p>
+<p>GST (5%) ₹<span id="gst">0</span></p>
+<h3>Total ₹<span id="total">0</span></h3>
+
+<button class="btn whatsapp" onclick="order()">📲 WhatsApp Order</button>
+<button class="btn upi" onclick="payUPI()">💳 Pay via UPI</button>
+<button class="btn pdf" onclick="downloadBill()">📄 Download Bill</button>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+let cart={};
+
+function add(name,price){
+ if(!cart[name]) cart[name]={qty:0,price};
+ cart[name].qty++;
+ render();
+}
+
+function remove(name){
+ if(cart[name]){
+  cart[name].qty--;
+  if(cart[name].qty<=0) delete cart[name];
+ }
+ render();
+}
+
+function render(){
+ let html="",sub=0;
+ for(let i in cart){
+  let amt=cart[i].qty*cart[i].price;
+  html+=`${i} x ${cart[i].qty} = ₹${amt}<br>`;
+  sub+=amt;
+ }
+ let gst=sub*0.05;
+ let total=sub+gst;
+
+ document.getElementById("items").innerHTML=html;
+ document.getElementById("sub").innerText=sub;
+ document.getElementById("gst").innerText=gst.toFixed(2);
+ document.getElementById("total").innerText=total.toFixed(2);
+}
+
+function order(){
+ let msg="🛒 Order:\n";
+ for(let i in cart){
+  msg+=`${i} x ${cart[i].qty}\n`;
+ }
+ msg+="Total ₹"+document.getElementById("total").innerText;
+ window.open("https://wa.me/91XXXXXXXXXX?text="+encodeURIComponent(msg));
+}
+
+function payUPI(){
+ let amt=document.getElementById("total").innerText;
+ window.location.href=`upi://pay?pa=yourupi@bank&pn=RanakawatStore&am=${amt}&cu=INR`;
+}
+
+function downloadBill(){
+ const { jsPDF } = window.jspdf;
+ let doc = new jsPDF();
+ let y = 15;
+
+ doc.setFontSize(16);
+ doc.text("RANAKAWAT KIRANA STORE",105,y,{align:"center"});
+ y+=6;
+ doc.setFontSize(10);
+ doc.text("Main Market, Ward No.3",105,y,{align:"center"});
+ y+=5;
+ doc.text("Mobile: 9XXXXXXXXX",105,y,{align:"center"});
+ y+=5;
+
+ doc.line(10,y,200,y);
+ y+=6;
+
+ let total=0;
+ for(let i in cart){
+  let amt=cart[i].qty*cart[i].price;
+  doc.text(i,10,y);
+  doc.text(cart[i].qty.toString(),130,y);
+  doc.text("₹"+amt,170,y);
+  y+=6;
+  total+=amt;
+ }
+
+ let gst=total*0.05;
+ let grand=total+gst;
+
+ y+=5;
+ doc.text("GST:",130,y);
+ doc.text("₹"+gst.toFixed(2),170,y);
+ y+=6;
+ doc.text("Total:",130,y);
+ doc.text("₹"+grand.toFixed(2),170,y);
+
+ let qrData=`upi://pay?pa=yourupi@bank&pn=Ranakawat&am=${grand}&cu=INR`;
+ let qr=document.createElement("canvas");
+ new QRCode(qr,{text:qrData,width:100,height:100});
+ doc.addImage(qr.toDataURL(),"PNG",15,y+10,40,40);
+
+ doc.save("Ranakawat_Bill.pdf");
+}
+</script>
+
+</body>
+</html>
